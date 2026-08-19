@@ -167,13 +167,8 @@ def _main(argv=None):
 
 
 def main(argv=None):
-    """CLI entry point. Wraps the real one so the usage nudge cannot change
-    the exit status or swallow an exception."""
-    try:
-        return _main(argv)
-    finally:
-        from ._nudge import record_run
-        record_run()
+    """CLI entry point."""
+    return _main(argv)
 
 
 if __name__ == "__main__":
