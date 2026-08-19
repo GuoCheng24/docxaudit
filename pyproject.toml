@@ -7,7 +7,7 @@ name = "docxaudit"
 version = "0.1.0"
 description = "Find what your converter silently dropped from a .docx. Zero dependencies."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Guo Cheng" }]
 keywords = ["docx", "ooxml", "pandoc", "word", "manuscript", "publishing",
