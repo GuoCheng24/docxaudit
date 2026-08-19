@@ -2,26 +2,38 @@
 
 **Find what your converter silently dropped from a `.docx`.** Zero dependencies.
 
+<p align="center">
+  <img src="docs/silent-losses.png" width="100%">
+</p>
+
 Pandoc — or any LaTeX/Markdown → Word pipeline — reports success and still loses things. A table disappears. Figures render in desktop Word but not in Word for the web. A supplement that is 11 pages as PDF arrives as 17 pages as `.docx`, and the editor counts the `.docx`.
 
 None of that shows up as an error. You find out from a reviewer.
 
 ```console
-$ docxaudit paper.docx
-paper.docx
-  152 paragraphs · 3 tables · 6 images (6 referenced) · 14 equations (4 display) · 0 page breaks
+$ docxaudit examples/sample.docx
+sample.docx
+  26 paragraphs · 1 tables · 3 images (3 referenced) · 4 equations (1 display) · 0 page breaks
 
-  ERROR   [NS_GENERATED] auto-generated namespace prefixes (ns2:, ns3:, ...) present
-          figures and equations will not render in strict viewers
-          fix: Register all prefixes before serialising - registering only 'w'
-               is the usual cause.
-
-  ERROR   [TBL_NO_GRID] table 2 has no <w:tblGrid>
+  ERROR   [TBL_NO_GRID] table 1 has no <w:tblGrid>
           columns collapse; the reader has to AutoFit by hand
+          fix: Inject an equal-width tblGrid plus a per-cell <w:tcW>, and set
+               <w:tblLayout w:type="autofit"/>.
 
-  WARN    [NO_PAGEBREAKS] 6 figures but no page breaks at all
-          if the PDF puts one figure per page, the .docx will not match
+  WARN    [NO_PAGEBREAKS] 3 figures but no page breaks at all
+          if the PDF puts one figure per page, the .docx will not match, and
+          reviewers count the .docx
+
+  WARN    [FONT_MISMATCH] heading font 'Calibri' differs from body font 'Consolas'
+
+  WARN    [FONT_EA_EMPTY] theme East Asian font is empty while the body sets one
+          CJK headings will fall back and stop matching the body text
 ```
+
+That output is real: `examples/sample.docx` is in this repository, built from
+`examples/sample.md` with plain `pandoc`. Three of those problems come from
+nothing more exotic than converting a short paper.
+
 
 ## Why the usual checks miss these
 
