@@ -1,4 +1,15 @@
-"""Command line interface."""
+"""docxaudit - find what your converter silently dropped from a .docx.
+
+Pandoc, and every LaTeX/Markdown -> Word pipeline, reports success and still
+loses things: a table collapses to zero width, figures render in desktop Word
+but not on the web, an 11-page PDF supplement arrives as 17 pages of .docx and
+the editor counts the .docx. None of it surfaces as an error; you hear it from
+a reviewer.
+
+This reads the raw OOXML and names the specific failures, each with the fix.
+Give it two files - the PDF you meant and the .docx you got - and it reports
+what the conversion lost between them.
+"""
 
 import argparse
 import sys
@@ -91,6 +102,16 @@ def _pdf_docx(pdf, docx, a):
 
 
 def _main(argv=None):
+    # Typing the bare command is how most people first meet a CLI; argparse's
+    # default there is an error message, which is a poor greeting.
+    if argv is None and len(sys.argv) == 1:
+        print(__doc__.strip() if __doc__ else "docxaudit")
+        print("\nTry it on a file you already have:\n"
+              "  docxaudit paper.docx\n"
+              "  docxaudit paper.docx --strict        # non-zero exit on warnings too\n"
+              "  docxaudit paper.pdf paper.docx       # compare what the conversion lost\n"
+              "\ndocxaudit --help  for every option.")
+        return 0
     ap = argparse.ArgumentParser(
         prog="docxaudit",
         description="Find what a converter silently dropped from a .docx.")
