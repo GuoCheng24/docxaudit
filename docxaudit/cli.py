@@ -42,18 +42,75 @@ def _wrap(text, width):
     return out
 
 
+def _pdf_docx(pdf, docx, a):
+    """Render the .docx and compare it against the PDF."""
+    from .render import compare_pdf_docx
+
+    rep = audit(docx)
+    try:
+        drift, info = compare_pdf_docx(pdf, docx, keep=a.keep)
+    except RuntimeError as e:
+        print(f"  {e}")
+        print("  (the structural audit below does not need either of them)")
+        print()
+        _print_report(rep, show_fix=not a.quiet)
+        return 1
+
+    if a.json:
+        import json as _json
+        print(_json.dumps({
+            "structural": rep.as_dict(),
+            "pdf": {k: v for k, v in info["pdf"].items() if k != "per_page"},
+            "docx": {k: v for k, v in info["docx"].items() if k != "per_page"},
+            "drift": [{"level": f.level, "code": f.code, "message": f.message,
+                       "detail": f.detail, "fix": f.fix} for f in drift],
+        }, indent=2, ensure_ascii=False))
+        return 1 if any(f.level == "error" for f in drift) or rep.errors else 0
+
+    ip, idx = info["pdf"], info["docx"]
+    print(f"{pdf}")
+    print(f"  {ip['pages']} pages · {ip['images']} images · {ip['chars']} chars")
+    print(f"{docx}  (rendered)")
+    print(f"  {idx['pages']} pages · {idx['images']} images · {idx['chars']} chars")
+    print()
+    _print_report(rep, show_fix=not a.quiet)
+    print("layout comparison")
+    if not drift:
+        print("  The two outputs agree on layout.")
+    for f in drift:
+        print(f"  {_ICON[f.level]} [{f.code}] {f.message}")
+        if f.detail:
+            print(f"          {f.detail}")
+        if f.fix and not a.quiet:
+            for i, line in enumerate(_wrap(f.fix, 72)):
+                print(f"          {'fix: ' if i == 0 else '     '}{line}")
+        print()
+    n_err = len(rep.errors) + sum(1 for f in drift if f.level == "error")
+    n_warn = len(rep.warnings) + sum(1 for f in drift if f.level == "warning")
+    return 1 if (n_err or (a.strict and n_warn)) else 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(
         prog="docxaudit",
         description="Find what a converter silently dropped from a .docx.")
     ap.add_argument("files", nargs="+", metavar="FILE",
-                    help="one .docx to audit, or two to compare")
+                    help="one .docx to audit, two .docx to compare, or a .pdf "
+                         "and a .docx to check them against each other")
+    ap.add_argument("--keep", metavar="DIR", default=None,
+                    help="keep the rendered PDF of the .docx in DIR")
     ap.add_argument("--json", action="store_true", help="machine-readable output")
     ap.add_argument("--quiet", action="store_true",
                     help="findings only, no suggested fixes")
     ap.add_argument("--strict", action="store_true",
                     help="exit non-zero on warnings as well as errors")
     a = ap.parse_args(argv)
+
+    # pdf + docx -> render the docx and compare layout, not just structure
+    pdfs = [f for f in a.files if f.lower().endswith(".pdf")]
+    docxs = [f for f in a.files if f.lower().endswith(".docx")]
+    if len(pdfs) == 1 and len(docxs) == 1:
+        return _pdf_docx(pdfs[0], docxs[0], a)
 
     reports = [audit(f) for f in a.files]
 

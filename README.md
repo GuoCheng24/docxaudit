@@ -70,6 +70,54 @@ comparison
   ERROR   [DRIFT_TEXT] text length differs by 11%
 ```
 
+## Check a PDF against the .docx
+
+Structural checks catch content that vanished. They cannot catch **layout**
+drift — the same content laid out over a different number of pages. Give it
+both files and it renders the `.docx` with LibreOffice and measures the result:
+
+```console
+$ docxaudit paper.pdf paper.docx
+paper.pdf
+  17 pages · 0 images · 43885 chars
+paper.docx  (rendered)
+  19 pages · 7 images · 35876 chars
+
+layout comparison
+  ERROR   [PAGE_COUNT] page count differs: 17 (pdf) vs 19 (docx)
+          2 page(s) apart; journals count the .docx
+
+  INFO    [VECTOR_FIGURES] the pdf draws its figures as vectors on 4 page(s);
+          the docx embeds 7 raster image(s)
+          expected for a LaTeX PDF - image counts are not comparable
+
+  INFO    [TEXT_TAIL_ONLY] 313 word(s) appear only in the pdf, 81% of them in
+          the final quarter
+          e.g. abdalah, ajani, albu, andrearczyk
+          fix: Concentrated at the end: normally the reference list in a
+               different citation style, not lost content.
+```
+
+Requires `pip install docxaudit[pdf]` and LibreOffice on PATH (or set
+`DOCXAUDIT_SOFFICE`). Both are optional — the structural checks above need
+neither.
+
+**Comparing two renderings honestly is harder than it sounds**, and most of the
+work here went into *not* crying wolf:
+
+- A LaTeX PDF draws figures as **vector operators**, not embedded images, so
+  counting images reports zero figures for a paper that plainly has them.
+  Figure-bearing pages are compared instead.
+- **Maths re-encodes.** The PDF holds Unicode mathematical alphanumerics, the
+  `.docx` holds OMML. Extracted text differs for identical equations, so only
+  ASCII prose is compared.
+- **Justified text hyphenates.** `advan-` + `tage` in the PDF and `advantage`
+  in the `.docx` would read as two words missing from each side; they are
+  rejoined first.
+- **Reference lists legitimately differ.** So the tool reports *where* the
+  missing words are: bunched in the final quarter it says so and calls it
+  formatting; spread through the body it calls it lost content.
+
 ## In CI
 
 Exit code is 1 when there are errors, or with `--strict` when there are warnings too:

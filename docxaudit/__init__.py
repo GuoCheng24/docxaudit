@@ -21,4 +21,16 @@ from .audit import audit, compare, Report
 from .checks import Finding
 
 __version__ = "0.1.0"
-__all__ = ["audit", "compare", "Report", "Finding", "__version__"]
+__all__ = ["audit", "compare", "Report", "Finding", "compare_pdf_docx",
+           "__version__"]
+
+
+def compare_pdf_docx(pdf_path, docx_path, keep=None):
+    """Render the .docx and compare its layout against a PDF.
+
+    Needs PyMuPDF (``pip install docxaudit[pdf]``) and LibreOffice. Returns
+    ``(findings, info)``; raises RuntimeError with an actionable message if
+    either is unavailable.
+    """
+    from .render import compare_pdf_docx as _impl
+    return _impl(pdf_path, docx_path, keep=keep)
