@@ -90,7 +90,7 @@ def _pdf_docx(pdf, docx, a):
     return 1 if (n_err or (a.strict and n_warn)) else 0
 
 
-def main(argv=None):
+def _main(argv=None):
     ap = argparse.ArgumentParser(
         prog="docxaudit",
         description="Find what a converter silently dropped from a .docx.")
@@ -143,6 +143,16 @@ def main(argv=None):
         n_err += sum(1 for f in d if f.level == "error")
         n_warn += sum(1 for f in d if f.level == "warning")
     return 1 if (n_err or (a.strict and n_warn)) else 0
+
+
+def main(argv=None):
+    """CLI entry point. Wraps the real one so the usage nudge cannot change
+    the exit status or swallow an exception."""
+    try:
+        return _main(argv)
+    finally:
+        from ._nudge import record_run
+        record_run()
 
 
 if __name__ == "__main__":
