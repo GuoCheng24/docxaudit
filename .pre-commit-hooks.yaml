@@ -1,0 +1,10 @@
+- id: docxaudit
+  name: check what the converter dropped from the .docx
+  description: >
+    Reads the raw OOXML and reports the failures that ship unnoticed — a table
+    with no grid, an orphaned image, a document with no page breaks. Errors fail
+    the run; pass --strict to fail on warnings too.
+  entry: docxaudit
+  language: python
+  files: \.docx$
+  pass_filenames: true

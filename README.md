@@ -138,11 +138,49 @@ work here went into *not* crying wolf:
 
 ## In CI
 
-Exit code is 1 when there are errors, or with `--strict` when there are warnings too:
+Exit code is 1 when there are errors, or with `--strict` when there are warnings
+too — so it drops into a manuscript pipeline as it stands.
+
+```yaml
+- uses: GuoCheng24/docxaudit/action@main
+  with:
+    path: build/paper.pdf build/paper.docx   # both, to compare what was lost
+    strict: true
+```
+
+The plain form works too:
 
 ```yaml
 - run: pip install docxaudit
 - run: docxaudit build/paper.docx --strict
+```
+
+### As a pre-commit hook
+
+```yaml
+repos:
+  - repo: https://github.com/GuoCheng24/docxaudit
+    rev: v0.1.4
+    hooks:
+      - id: docxaudit
+```
+
+### After a pandoc run
+
+This is where most people meet these failures, so it is the case worth spelling
+out. Pandoc exits 0 and the table is still gone:
+
+```bash
+pandoc paper.md -o paper.docx --reference-doc=template.docx
+docxaudit paper.docx          # exit 1 if something did not survive
+```
+
+If you build a PDF from the same source, hand it both. That is the check that
+catches a supplement arriving at 17 pages when the PDF was 11 — and the editor
+counts the .docx.
+
+```bash
+docxaudit paper.pdf paper.docx
 ```
 
 ## As a library

@@ -1,0 +1,25 @@
+name: 'docxaudit'
+description: 'Fail the build when a conversion silently drops content from a .docx'
+branding:
+  icon: 'file-text'
+  color: 'orange'
+inputs:
+  path:
+    description: 'The .docx to check. Pass the PDF too, space-separated, to compare what the conversion lost.'
+    required: true
+  strict:
+    description: 'Also fail on warnings, not only errors'
+    required: false
+    default: 'false'
+runs:
+  using: 'composite'
+  steps:
+    - shell: bash
+      run: pip install --quiet docxaudit
+    - shell: bash
+      run: |
+        if [ "${{ inputs.strict }}" = "true" ]; then
+          docxaudit ${{ inputs.path }} --strict
+        else
+          docxaudit ${{ inputs.path }}
+        fi
