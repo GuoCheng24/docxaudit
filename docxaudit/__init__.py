@@ -20,7 +20,7 @@ Command line::
 from .audit import audit, compare, Report
 from .checks import Finding
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 __all__ = ["audit", "compare", "Report", "Finding", "compare_pdf_docx",
            "__version__"]
 
