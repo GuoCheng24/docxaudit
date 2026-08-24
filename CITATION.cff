@@ -1,0 +1,21 @@
+cff-version: 1.2.0
+message: "If this was useful in your work, please cite it."
+title: "docxaudit: find what your converter silently dropped from a .docx"
+abstract: "Reads the raw OOXML of a Word document and reports the conversion failures that ship unnoticed: a table collapsed to zero width, an orphaned image, a supplement whose page count no longer matches the PDF. Exits non-zero, so it drops into a manuscript pipeline."
+type: software
+authors:
+  - family-names: Cheng
+    given-names: Guo
+    affiliation: "University of Chinese Academy of Sciences"
+    # orcid: "https://orcid.org/0000-0000-0000-0000"   # fill in before the first Zenodo release
+repository-code: "https://github.com/GuoCheng24/docxaudit"
+license: MIT
+version: 0.1.5
+keywords:
+  - "docx"
+  - "OOXML"
+  - "pandoc"
+  - "manuscript"
+  - "reproducibility"
+  - "publishing"
+  - "validation"

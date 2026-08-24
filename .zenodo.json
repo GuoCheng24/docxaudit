@@ -1,0 +1,22 @@
+{
+  "title": "docxaudit: find what your converter silently dropped from a .docx",
+  "description": "Reads the raw OOXML of a Word document and reports the conversion failures that ship unnoticed: a table collapsed to zero width, an orphaned image, a supplement whose page count no longer matches the PDF. Exits non-zero, so it drops into a manuscript pipeline.",
+  "upload_type": "software",
+  "license": "mit",
+  "creators": [
+    {
+      "name": "Cheng, Guo",
+      "affiliation": "University of Chinese Academy of Sciences"
+    }
+  ],
+  "keywords": [
+    "docx",
+    "OOXML",
+    "pandoc",
+    "manuscript",
+    "reproducibility",
+    "publishing",
+    "validation"
+  ],
+  "access_right": "open"
+}
