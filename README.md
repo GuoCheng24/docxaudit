@@ -35,7 +35,8 @@ sample.docx
           CJK headings will fall back and stop matching the body text
 ```
 
-That output is real: `examples/sample.docx` is in this repository, built from
+That output is real, trimmed to the findings (an INFO line and the fix text under
+the warnings are left out): `examples/sample.docx` is in this repository, built from
 `examples/sample.md` with plain `pandoc`. Three of those problems come from
 nothing more exotic than converting a short paper.
 
