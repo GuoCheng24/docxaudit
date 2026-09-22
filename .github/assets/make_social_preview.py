@@ -42,7 +42,7 @@ def chart(ax, accent):
         colour = "#cf222e" if red else "#bf8700"
         ax.text(0.80, y, "ERROR" if red else "WARN", fontsize=34, fontweight="bold",
                 color=colour, family=SANS, va="center")
-        ax.text(2.58, y, SHORT.get(code, code), fontsize=34, color="#17181a",
+        ax.text(2.72, y, SHORT.get(code, code), fontsize=34, color="#17181a",
                 family=SANS, va="center")
         y -= 0.60
 
