@@ -33,10 +33,20 @@ def chart(ax, accent):
     label big enough to read at 360 px; at that size the chip is a smudge anyway. Coloured
     words carry the same severity and are legible.
     """
-    ax.text(0.78, 3.44, f"{S['paragraphs']} paragraphs, {S['tables']} table, "
+    # the document as a strip of its own parts, sized by count: what the converter was given
+    import matplotlib.pyplot as plt
+    parts = [("paragraphs", S["paragraphs"], "#c7c3bc"), ("equations", S["equations"], "#9aa0a6"),
+             ("figures", S["images"], "#bf8700"), ("table", S["tables"], "#cf222e")]
+    total = sum(v for _, v, _ in parts)
+    x = 0.80
+    for label, v, col in parts:
+        w = 10.40 * v / total
+        ax.add_patch(plt.Rectangle((x, 3.42), w, 0.30, color=col, zorder=3))
+        x += w
+    ax.text(0.78, 3.06, f"{S['paragraphs']} paragraphs, {S['tables']} table, "
                         f"{S['images']} figures, {S['equations']} equations",
             fontsize=34, color="#55585c", family=SANS)
-    y = 2.92
+    y = 2.56
     for level, code, _ in FOUND:
         red = level == "error"
         colour = "#cf222e" if red else "#bf8700"
@@ -44,7 +54,7 @@ def chart(ax, accent):
                 color=colour, family=SANS, va="center")
         ax.text(2.72, y, SHORT.get(code, code), fontsize=34, color="#17181a",
                 family=SANS, va="center")
-        y -= 0.60
+        y -= 0.52
 
 
 
