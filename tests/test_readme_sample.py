@@ -48,3 +48,18 @@ def test_readme_sample_block_matches_the_audit():
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "trimmed" in readme.split("That output is real")[1][:200], (
         "the README calls the block real without saying it is trimmed")
+
+
+def test_readme_block_names_the_file_as_the_command_prints_it():
+    """The block showed `sample.docx` under a command that prints `examples/sample.docx`."""
+    assert _readme_block().splitlines()[0] == "examples/sample.docx"
+
+
+def test_python_m_runs_the_cli():
+    """`python -m docxaudit` failed: the package had no __main__.py."""
+    import subprocess
+    import sys
+    r = subprocess.run([sys.executable, "-m", "docxaudit", "--help"], cwd=ROOT,
+                       capture_output=True, text=True)
+    assert r.returncode == 0, r.stderr
+    assert "usage" in r.stdout.lower()

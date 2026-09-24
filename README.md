@@ -17,7 +17,7 @@ None of that shows up as an error. You find out from a reviewer.
 
 ```console
 $ docxaudit examples/sample.docx
-sample.docx
+examples/sample.docx
   26 paragraphs · 1 tables · 3 images (3 referenced) · 4 equations (1 display) · 0 page breaks
 
   ERROR   [TBL_NO_GRID] table 1 has no <w:tblGrid>
@@ -70,6 +70,7 @@ Every check corresponds to a failure that actually reached a submission.
 | `TBL_NO_GRID` | Table has no `<w:tblGrid>` — columns collapse to a sliver in Word. Common when tables come from LaTeX booktabs. |
 | `TBL_ZERO_WIDTH` | Table declares width 0. |
 | `IMG_ORPHAN` | Images embedded in the archive with no `<w:drawing>` referencing them — the anchors were dropped. |
+| `IMG_FEWER_REFS` | More image files in the archive than drawings that reference them — some figures lost their anchors, or the archive carries leftovers. |
 | `NO_PAGEBREAKS` | `\clearpage` does not survive conversion, so one-figure-per-page silently becomes a different page count. |
 | `MATH_INLINE` | Inline maths converts least reliably; complex expressions arrive mangled. |
 | `FONT_MISMATCH` | Theme heading font disagrees with the body default — sans-serif headings over serif text. |
