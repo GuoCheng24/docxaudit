@@ -162,7 +162,7 @@ The plain form works too:
 ```yaml
 repos:
   - repo: https://github.com/GuoCheng24/docxaudit
-    rev: v0.1.5
+    rev: v0.1.6
     hooks:
       - id: docxaudit
 ```
